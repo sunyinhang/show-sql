@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -45,6 +44,7 @@ public class MybatisAutoSql implements Interceptor {
     public MybatisAutoSql() {
     }
 
+    @Override
     public Object intercept(Invocation invocation) throws Throwable {
         Object[] args = invocation.getArgs();
         MappedStatement ms = (MappedStatement)args[0];
@@ -72,8 +72,8 @@ public class MybatisAutoSql implements Interceptor {
         logger.info(sqlId + "\n"
                 + "  =====>  " + sql);
         Object proceed = invocation.proceed();
-        long end = System.currentTimeMillis();
-        long time = end - start;
+
+        long time = System.currentTimeMillis() - start;
         if (time > 1L) {
             // time
             logger.info(sqlId + "\n"
@@ -84,15 +84,15 @@ public class MybatisAutoSql implements Interceptor {
         return proceed;
     }
 
-    public static String getSql(Configuration configuration, BoundSql boundSql, String sqlId) {
+    public String getSql(Configuration configuration, BoundSql boundSql, String sqlId) {
         String sql = showSql(configuration, boundSql);
         StringBuilder str = new StringBuilder(100);
         str.append(sql);
         return str.toString();
     }
 
-    private static String getParameterValue(Object obj) {
-        String value = null;
+    private String getParameterValue(Object obj) {
+        String value;
         if (obj instanceof String) {
             value = "'" + obj.toString() + "'";
         } else if (obj instanceof Date) {
@@ -107,7 +107,7 @@ public class MybatisAutoSql implements Interceptor {
         return value;
     }
 
-    public static String showSql(Configuration configuration, BoundSql boundSql) {
+    public String showSql(Configuration configuration, BoundSql boundSql) {
         Object parameterObject = boundSql.getParameterObject();
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         String sql = boundSql.getSql().replaceAll("[\\s]+", " ");
@@ -117,30 +117,27 @@ public class MybatisAutoSql implements Interceptor {
                 sql = sql.replaceFirst("\\?", getParameterValue(parameterObject));
             } else {
                 MetaObject metaObject = configuration.newMetaObject(parameterObject);
-                Iterator var8 = parameterMappings.iterator();
-
-                while(var8.hasNext()) {
-                    ParameterMapping parameterMapping = (ParameterMapping)var8.next();
+                for (ParameterMapping parameterMapping : parameterMappings) {
                     String propertyName = parameterMapping.getProperty();
-                    Object obj;
                     if (metaObject.hasGetter(propertyName)) {
-                        obj = metaObject.getValue(propertyName);
+                        Object obj = metaObject.getValue(propertyName);
                         sql = sql.replaceFirst("\\?", getParameterValue(obj));
                     } else if (boundSql.hasAdditionalParameter(propertyName)) {
-                        obj = boundSql.getAdditionalParameter(propertyName);
+                        Object obj = boundSql.getAdditionalParameter(propertyName);
                         sql = sql.replaceFirst("\\?", getParameterValue(obj));
                     }
                 }
             }
         }
-
         return sql;
     }
 
+    @Override
     public Object plugin(Object target) {
         return Plugin.wrap(target, this);
     }
 
+    @Override
     public void setProperties(Properties properties) {
     }
 }
