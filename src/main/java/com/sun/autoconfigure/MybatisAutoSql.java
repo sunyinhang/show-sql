@@ -66,20 +66,18 @@ public class MybatisAutoSql implements Interceptor {
             boundSql = ms.getBoundSql(parameter);
         }
 
-        long start = System.currentTimeMillis();
         String sql = getSql(configuration, boundSql, sqlId);
         // sql
         logger.info(sqlId + "\n"
                 + "  =====>  " + sql);
+
+        long start = System.currentTimeMillis();
         Object proceed = invocation.proceed();
-
         long time = System.currentTimeMillis() - start;
-        if (time > 1L) {
-            // time
-            logger.info(sqlId + "\n"
-                    + "  =====>  " + time + "ms");
 
-        }
+        // time
+        logger.info(sqlId + "\n"
+                + "  =====>  " + time + "ms");
 
         return proceed;
     }
