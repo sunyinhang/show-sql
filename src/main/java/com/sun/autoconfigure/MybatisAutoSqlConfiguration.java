@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Profile;
 @ConditionalOnProperty(value = "mybatisAutoSql.show",matchIfMissing = true)
 public class MybatisAutoSqlConfiguration {
 	@Bean
-	@Profile({"dev"})// 设置 dev  环境开启
+//	@Profile({"dev"})// 设置 dev  环境开启
 	public Interceptor getInterceptor(){ 
 		return new MybatisAutoSql();
 	} 

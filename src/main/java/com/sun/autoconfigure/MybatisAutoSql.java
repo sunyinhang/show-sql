@@ -1,5 +1,6 @@
 package com.sun.autoconfigure;
 
+import com.sun.cache.ThreadSqlContext;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
@@ -78,6 +79,8 @@ public class MybatisAutoSql implements Interceptor {
         // time
         logger.info(sqlId + "\n"
                 + "  =====>  " + time + "ms");
+        // 缓存到本地
+        ThreadSqlContext.addSql(sql);
 
         return proceed;
     }
