@@ -9,6 +9,9 @@ public class SqlSyncCondition implements Condition {
     @Override
     public boolean matches(ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
         String property = conditionContext.getEnvironment().getProperty("mybatis.send-or-receive");
-        return StringUtils.hasText(property);
+        if (StringUtils.isEmpty(property)) {
+            return false;
+        }
+        return property.contains("send");
     }
 }
