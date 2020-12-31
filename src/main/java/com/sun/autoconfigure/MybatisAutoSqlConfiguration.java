@@ -6,6 +6,7 @@ import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Profile;
 public class MybatisAutoSqlConfiguration {
 	@Bean
 //	@Profile({"dev"})// 设置 dev  环境开启
+	@Conditional(value = SqlSyncCondition.class)	// 验证sql同步是否开启
 	public Interceptor getInterceptor(){ 
 		return new MybatisAutoSql();
 	} 
