@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
 public class MybatisAutoSqlConfiguration {
 	@Bean
 //	@Profile({"dev"})// 设置 dev  环境开启
-	@Conditional(value = SqlSyncSendCondition.class)	// 验证sql同步是否开启
+//	@Conditional(value = SqlSyncSendCondition.class)	// 验证sql同步是否开启
 	public Interceptor getInterceptor(){ 
 		return new MybatisAutoSql();
 	} 

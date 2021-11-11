@@ -80,7 +80,7 @@ public class MybatisAutoSql implements Interceptor {
         logger.info(sqlId + "\n"
                 + "  =====>  " + time + "ms");
         // 缓存到本地
-        ThreadSqlContext.addSql(sql);
+//        ThreadSqlContext.addSql(sql);
 
         return proceed;
     }
